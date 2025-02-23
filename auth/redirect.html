@@ -20,9 +20,12 @@
 
     const myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
+    myHeaders.append("i1ove1oongtoo", "ju5tK1dding")
 
     const urlencoded = new URLSearchParams();
     urlencoded.append("client_id", "d550e8f2-8e6c-4786-ad50-03f5355393e4");
+    // replace by CF worker
+    // urlencoded.append("client_secret", "")
     urlencoded.append(
       "scope",
       "https://graph.microsoft.com/User.ReadBasic.All https://graph.microsoft.com/email"
@@ -30,17 +33,17 @@
     urlencoded.append("grant_type", "authorization_code");
     urlencoded.append("code_verifier", "test");
     urlencoded.append("code", authCode);
-    urlencoded.append("redirect_uri", "http://localhost:3000/auth/redirect");
+    urlencoded.append("redirect_uri", "https://essilor2.salary-hero.com/auth/redirect");
 
     const requestOptions = {
       method: "POST",
       headers: myHeaders,
       body: urlencoded,
       redirect: "follow",
-    };
+     };
 
     fetch(
-      "https://login.microsoftonline.com/12e00a09-cde7-4dad-b923-e25a640d559d/oauth2/v2.0/token",
+      "https://anywhere.ntsd.workers.dev/?https://login.microsoftonline.com/12e00a09-cde7-4dad-b923-e25a640d559d/oauth2/v2.0/token",
       requestOptions
     )
       .then((response) => response.text())
