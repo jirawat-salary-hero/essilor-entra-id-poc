@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Essilor OAuth POC</title>
+  </head>
+  <body>
+    Token
+    <pre id="token"></pre>
+    Data
+    <pre id="json"></pre>
+  </body>
+  <script>
+    const tokenField = document.getElementById("token");
+    const jsonField = document.getElementById("json");
+    const urlParams = new URLSearchParams(window.location.search);
+    const authCode = urlParams.get("code");
+
+    const myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
+
+    const urlencoded = new URLSearchParams();
+    urlencoded.append("client_id", "d550e8f2-8e6c-4786-ad50-03f5355393e4");
+    urlencoded.append(
+      "scope",
+      "https://graph.microsoft.com/User.ReadBasic.All https://graph.microsoft.com/email"
+    );
+    urlencoded.append("grant_type", "authorization_code");
+    urlencoded.append("code_verifier", "test");
+    urlencoded.append("code", authCode);
+    urlencoded.append("redirect_uri", "http://localhost:3000/auth/redirect");
+
+    const requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      body: urlencoded,
+      redirect: "follow",
+    };
+
+    fetch(
+      "https://login.microsoftonline.com/12e00a09-cde7-4dad-b923-e25a640d559d/oauth2/v2.0/token",
+      requestOptions
+    )
+      .then((response) => response.text())
+      .then((result) => {
+        console.log(result);
+        const token = JSON.parse(result).access_token;
+        console.log(token);
+        tokenField.innerText = JSON.stringify(JSON.parse(result), undefined, 2);
+        fetch("https://graph.microsoft.com/v1.0/me", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+          .then((response) => response.text())
+          .then((result) => {
+            console.log(result);
+            jsonField.innerText = JSON.stringify(
+              JSON.parse(result),
+              undefined,
+              2
+            );
+          })
+          .catch((error) => console.error(error));
+      })
+      .catch((error) => console.error(error));
+  </script>
+</html>
